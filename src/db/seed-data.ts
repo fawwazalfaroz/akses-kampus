@@ -15,7 +15,7 @@
  * sinkronisasi (npm run db:setup / build) memperbarui database.
  */
 
-export const SEED_VERSION = "2026-10-29.4-denah-2020";
+export const SEED_VERSION = "2026-10-29.5-lorong-lift";
 
 export const building = {
   slug: "binus-anggrek",
@@ -47,14 +47,18 @@ export const nodes: SeedNode[] = [
   { code: "J-N1", label: "koridor depan Lab. Restoran", x: 0.14, y: 0.345, kind: "corridor" },
   { code: "J-N2", label: "depan A&W", x: 0.26, y: 0.345, kind: "corridor" },
   { code: "J-N3", label: "depan iBOX", x: 0.32, y: 0.345, kind: "corridor" },
+  { code: "J-N-ELV", label: "ujung utara lorong lift", x: 0.36, y: 0.345, kind: "junction" },
   { code: "J-N4", label: "depan toilet", x: 0.4, y: 0.345, kind: "corridor" },
   { code: "J-N5", label: "ujung koridor utara", x: 0.49, y: 0.345, kind: "junction" },
-  { code: "J-N6", label: "depan SRSC", x: 0.535, y: 0.345, kind: "corridor" },
+  { code: "J-N6", label: "depan SRSC", x: 0.555, y: 0.345, kind: "corridor" },
   // Aula barat
   { code: "J-MID", label: "tengah aula", x: 0.25, y: 0.475, kind: "junction" },
+  // Lorong sempit antara lift dan dinding barat LKC (menghubungkan sisi utara dan selatan)
+  { code: "J-ELV", label: "depan lift", x: 0.36, y: 0.48, kind: "corridor" },
   // Sisi selatan (depan Megastore, BCA, Lobby)
   { code: "J-S1", label: "depan BINUS Megastore", x: 0.14, y: 0.605, kind: "corridor" },
   { code: "J-S2", label: "depan BCA", x: 0.29, y: 0.605, kind: "junction" },
+  { code: "J-S-ELV", label: "ujung selatan lorong lift", x: 0.36, y: 0.605, kind: "junction" },
   { code: "J-LOBBY", label: "simpang depan Lobby", x: 0.42, y: 0.605, kind: "junction" },
   { code: "J-S5", label: "dekat eskalator selatan", x: 0.49, y: 0.6, kind: "junction" },
   // Titik masuk ruangan
@@ -64,10 +68,11 @@ export const nodes: SeedNode[] = [
   { code: "E-AW", label: "A&W", x: 0.26, y: 0.31, kind: "entry" },
   { code: "E-IBOX", label: "iBOX", x: 0.32, y: 0.31, kind: "entry" },
   { code: "E-WC", label: "toilet", x: 0.4, y: 0.31, kind: "entry" },
-  { code: "E-SRSC", label: "pintu SRSC", x: 0.535, y: 0.31, kind: "entry" },
+  { code: "E-SRSC", label: "pintu SRSC", x: 0.555, y: 0.31, kind: "entry" },
   { code: "E-MEGA", label: "pintu BINUS Megastore", x: 0.14, y: 0.64, kind: "entry" },
   { code: "E-BCA", label: "pintu BCA", x: 0.29, y: 0.64, kind: "entry" },
-  { code: "E-ELEV", label: "elevator", x: 0.295, y: 0.475, kind: "entry" },
+  // Bukaan lift ada di sisi timur (sisi kanan pada denah); sisi barat tertutup dinding.
+  { code: "E-ELEV", label: "elevator", x: 0.343, y: 0.48, kind: "entry" },
   { code: "E-ESC-N", label: "eskalator utara", x: 0.5, y: 0.377, kind: "entry" },
   { code: "E-ESC-S", label: "eskalator selatan", x: 0.5, y: 0.586, kind: "entry" },
   { code: "E-ATM", label: "ATM BCA", x: 0.51, y: 0.615, kind: "entry" },
@@ -77,14 +82,18 @@ export const nodes: SeedNode[] = [
 export const edges: [string, string][] = [
   ["J-N1", "J-N2"],
   ["J-N2", "J-N3"],
-  ["J-N3", "J-N4"],
+  ["J-N3", "J-N-ELV"],
+  ["J-N-ELV", "J-N4"],
   ["J-N4", "J-N5"],
   ["J-N5", "J-N6"],
   ["J-N1", "J-S1"],
   ["J-N2", "J-MID"],
   ["J-MID", "J-S2"],
   ["J-S1", "J-S2"],
-  ["J-S2", "J-LOBBY"],
+  ["J-S2", "J-S-ELV"],
+  ["J-S-ELV", "J-LOBBY"],
+  ["J-N-ELV", "J-ELV"],
+  ["J-ELV", "J-S-ELV"],
   ["J-LOBBY", "J-S5"],
   ["J-LOBBY", "E-LOBBY"],
   ["J-LOBBY", "E-LKC"],
@@ -95,7 +104,7 @@ export const edges: [string, string][] = [
   ["J-N6", "E-SRSC"],
   ["J-S1", "E-MEGA"],
   ["J-S2", "E-BCA"],
-  ["J-MID", "E-ELEV"],
+  ["J-ELV", "E-ELEV"],
   ["J-N5", "E-ESC-N"],
   ["J-S5", "E-ESC-S"],
   ["J-S5", "E-ATM"],

@@ -6,7 +6,9 @@ import {
   buildSteps,
   type GraphNode,
   type GraphEdge,
+  segmentLength,
 } from "../src/lib/routing";
+import * as seed from "../src/db/seed-data";
 
 const n = (id: number, x: number, y: number): GraphNode => ({
   id,
@@ -78,4 +80,33 @@ test("instruksi teks diawali titik awal dan diakhiri tujuan", () => {
   assert.equal(steps[0], "Mulai dari Lobby.");
   assert.equal(steps.at(-1), "Tiba di LKC.");
   assert.ok(steps.includes("Belok kanan."));
+});
+
+// Graph lantai 1 dari seed-data.ts, dengan bobot yang sama seperti src/db/seed.ts.
+function seedRoute(fromSlug: string, toSlug: string) {
+  const idByCode = new Map(seed.nodes.map((node, i) => [node.code, i + 1]));
+  const codeById = new Map([...idByCode].map(([code, id]) => [id, code]));
+  const nodeByCode = new Map(seed.nodes.map((node) => [node.code, node]));
+  const graphNodes = seed.nodes.map((node) => n(idByCode.get(node.code)!, node.x, node.y));
+  const graphEdges = seed.edges.map(([a, b], i) =>
+    e(i + 1, idByCode.get(a)!, idByCode.get(b)!, segmentLength(nodeByCode.get(a)!, nodeByCode.get(b)!)),
+  );
+  const entry = (slug: string) => idByCode.get(seed.locations.find((l) => l.slug === slug)!.entryNodeCode!)!;
+  const r = findShortestPath(graphNodes, graphEdges, entry(fromSlug), entry(toSlug));
+  assert.equal(r.found, true);
+  return r.found ? r.nodeIds.map((id) => codeById.get(id)!) : [];
+}
+
+test("denah: lift dimasuki dari bukaan sisi timur lewat lorong samping LKC", () => {
+  for (const from of ["lobby", "bca", "lab-restoran"]) {
+    const path = seedRoute(from, "elevator");
+    assert.deepEqual(path.slice(-2), ["J-ELV", "E-ELEV"], `${from} → elevator`);
+    assert.ok(!path.includes("J-MID"), `${from} → elevator tidak memutar lewat aula barat`);
+  }
+});
+
+test("denah: ATM BCA ke SRSC lewat lorong lift, tidak memutar lewat aula barat", () => {
+  const path = seedRoute("atm-bca", "srsc");
+  assert.ok(path.includes("J-ELV"));
+  assert.ok(!path.includes("J-MID"));
 });
