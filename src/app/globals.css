@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/*
+ * Token warna AksesKampus.
+ * Konsep: lembar gambar kerja arsitek (kertas dingin + tinta biru-abu) dengan
+ * aksen kuning rambu penunjuk arah untuk rute.
+ */
+:root {
+  --paper: #f3f6f5;
+  --paper-raised: #ffffff;
+  --grid: #dde5e2;
+  --grid-strong: #c6d2ce;
+  --ink: #1d2b36;
+  --ink-soft: #4a5a66;
+  --ink-faint: #7b8a94;
+  --line: #d3dcd9;
+  --signal: #ffc21a; /* kuning rambu: garis rute */
+  --go: #0b7a55; /* titik awal / aksi utama */
+  --go-strong: #08613f;
+  --status-verified: #0b7a55;
+  --status-unverified: #9a5b00;
+  --status-unverified-bg: #fff3d6;
+  --status-outdated: #b42318;
+  --status-outdated-bg: #fde8e6;
+  --focus: #2563eb;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-raised: var(--paper-raised);
+  --color-grid: var(--grid);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-signal: var(--signal);
+  --color-go: var(--go);
+  --color-go-strong: var(--go-strong);
+  --color-verified: var(--status-verified);
+  --color-unverified: var(--status-unverified);
+  --color-unverified-bg: var(--status-unverified-bg);
+  --color-outdated: var(--status-outdated);
+  --color-outdated-bg: var(--status-outdated-bg);
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Penanda lokasi pada peta: fokus keyboard terlihat jelas. */
+.map-marker:focus-visible {
+  outline: none;
+}
+.map-marker:focus-visible .marker-ring {
+  stroke: var(--focus);
+  stroke-width: 3;
+}
+
+/* Animasi garis rute: satu momen gerak yang menjawab aksi "Cari rute". */
+@keyframes route-draw {
+  from {
+    stroke-dashoffset: var(--route-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.route-reveal {
+  stroke-dasharray: var(--route-length);
+  animation: route-draw 900ms cubic-bezier(0.3, 0.7, 0.2, 1) both;
+}
+
+@keyframes marker-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+.marker-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: marker-pulse 1.6s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-reveal,
+  .marker-pulse {
+    animation: none;
+  }
+  .route-reveal {
+    stroke-dasharray: none;
+  }
+}
+
+/* Dialog laporan */
+dialog::backdrop {
+  background: rgb(29 43 54 / 0.45);
+}
